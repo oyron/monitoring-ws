@@ -1,9 +1,6 @@
 """ Generate traffic to API """
 from time import sleep
 import requests
-from essential_generators import DocumentGenerator
-
-gen = DocumentGenerator()
 
 SERVER_URL = 'https://<prefix>-inventory.app.playground.radix.equinor.com'
 SLEEP_LENGTH = 1500
