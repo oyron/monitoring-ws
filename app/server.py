@@ -20,7 +20,7 @@ book_inventory = BookInventory()
 
 app_name = os.environ.get('RADIX_APP', f'{"".join(choice(ascii_lowercase) for _i in range(4))}-inventory')
 prefix = app_name.replace("-", "_")
-request_counter = Counter(f'{prefix}_request_counter', 'Requests to inventory backend', ['method', 'route', 'status'])
+request_counter = Counter(f'{prefix}_request_counter', 'Requests to inventory API', ['method', 'route', 'status'])
 request_duration = Histogram(f'{prefix}_request_duration', 'Request duration[ms]', ['method', 'route'])
 gauge = Gauge(f'{prefix}_size', 'Number of books in inventory')
 
