@@ -1,0 +1,8 @@
+.vscode
+**/.DS_Store
+**/*.log
+node-js/node_modules
+node-js/package-lock.json
+**/*.pyc
+**/__pycache__
+.venv

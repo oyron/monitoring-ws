@@ -1,0 +1,163 @@
+openapi: '3.0.1'
+info:
+  title: Inventory API
+  description: Sample application in EDC Metrics and Monitoring workshop
+  version: 1.0.0
+servers:
+  - url: '{{host_url}}/api'
+tags:
+  - name: inventory
+    description: An inventory of books
+paths:
+  /books:
+    get:
+      tags:
+        - inventory
+      summary: Return a query-based selection of books
+      operationId: getBooks
+      parameters:
+        - name: q
+          in: query
+          description: A generic search parameter
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '400':
+          description: Unknown or missing query parameter
+                  
+    post:
+        tags:
+          - inventory
+        summary: Add a new book to the inventory
+        operationId: addBook
+        requestBody:
+          description: bookData object that needs to be added to the inventory
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookData'
+        responses:
+          '201':
+            description: New book created
+            content:
+              application/json:
+                schema:
+                  items:
+                    $ref: '#/components/schemas/Book'
+          '400':
+            description: Invalid request content
+                    
+  /books/{id}:
+    get:
+      tags:
+        - inventory
+      summary: Get a specific book
+      operationId: getBook
+      parameters:
+        - name: id
+          in: path
+          description: Book id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Book'
+        '404':
+          description: Id no found
+
+    put:
+      tags:
+        - inventory
+      summary: Update existing book
+      operationId: updateBook
+      parameters:
+        - name: id
+          in: path
+          description: Book id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+          description: bookData object that needs to be added to the inventory
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Book'
+        '400':
+          description: Invalid request content
+        '404':
+          description: Id no found
+
+    delete:
+      tags:
+        - inventory
+      summary: Delete existing book
+      operationId: deleteBook
+      parameters:
+        - name: id
+          in: path
+          description: Book id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '204':
+          description: Successfully deleted. No content returned
+        '404':
+          description: Id no found
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          example: "The Equinor Book"
+        author:
+          type: string
+          example: "Anders Opedal"
+        abstract:
+          type: string
+          example: "How we work is equally important"
+    BookData:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "The Equinor Book"
+        author:
+          type: string
+          example: "Anders Opedal"
+        abstract:
+          type: string
+          example: "The way we deliver is equally important"
+  
+externalDocs:
+  description: GitHub repository
+  url: 'https://github.com/oyron/metrics-ws'

@@ -1,0 +1,31 @@
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: <prefix>-inventory
+spec:
+  environments:
+    - name: single
+      build:
+        from: radix
+  dnsAppAlias:
+    environment: single
+    component: app
+  components:
+    - name: app
+      environmentConfig:
+        - environment: single
+          monitoring: true
+      src: "."
+      ports:
+        - name: http
+          port: 8080
+      publicPort: http
+      variables:
+        LOG_LEVEL: WARN
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "50m"
+        limits:
+          memory: "256Mi"
+          cpu: "150m"
