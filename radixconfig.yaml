@@ -12,16 +12,13 @@ spec:
     component: app
   components:
     - name: app
-      environmentConfig:
-        - environment: single
-          monitoring: true
       src: "."
       ports:
         - name: http
           port: 8080
       publicPort: http
       variables:
-        LOG_LEVEL: WARN
+        LOG_LEVEL: INFO
       resources:
         requests:
           memory: "128Mi"

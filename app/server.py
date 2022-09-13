@@ -4,11 +4,9 @@ import logging
 import os
 from random import choice
 from string import ascii_lowercase
-from timeit import default_timer
 from flask import (Flask, jsonify, make_response, request, send_file, send_from_directory, render_template)
 from flask_cors import CORS
 from paste.translogger import TransLogger
-from prometheus_client import Counter, Gauge, Histogram, generate_latest
 from waitress import serve
 from .model import BookInventory
 from .validator import validate_input
@@ -19,25 +17,6 @@ CORS(app, resources={"*": {"origins": "['https://petstore.swagger.io']"}})
 book_inventory = BookInventory()
 
 app_name = os.environ.get('RADIX_APP', f'{"".join(choice(ascii_lowercase) for _i in range(4))}-inventory')
-prefix = app_name.replace("-", "_")
-request_counter = Counter(f'{prefix}_request_counter', 'Requests to inventory backend', ['method', 'route', 'status'])
-request_duration = Histogram(f'{prefix}_request_duration', 'Request duration[ms]', ['method', 'route'])
-gauge = Gauge(f'{prefix}_size', 'Number of books in inventory')
-
-
-@app.before_request
-def before_request_fn():
-    request.prom_start_time = default_timer()
-
-
-@app.after_request
-def after_request_fn(response):
-    if request.path.startswith("/api"):
-        request_counter.labels(method=request.method, route=request.url_rule.rule, status=response.status_code).inc()
-        elapsed_time = default_timer() - request.prom_start_time
-        request_duration.labels(method=request.method, route=request.url_rule.rule).observe(elapsed_time)
-        gauge.set(book_inventory.count())
-    return response
 
 
 @app.route('/api/books', methods=['GET'])
@@ -106,13 +85,6 @@ def send_openapi():
 @app.route('/<path:path>')
 def send_static(path):
     return send_from_directory('static', path)
-
-
-@app.route('/metrics')
-def send_metrics():
-    response = make_response(generate_latest())
-    response.headers['content-type'] = 'text/plain'
-    return response
 
 
 if __name__ == "__main__":
