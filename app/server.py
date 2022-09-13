@@ -33,7 +33,7 @@ def after_request_fn(response):
 def api_get_books():
     if len(request.args) == 0:
         return "Missing query parameter 'q'", 400
-    elif 'q' not in request.args:
+    if 'q' not in request.args:
         return "Unknown query parameters", 400
     keyword = request.args['q']
     return jsonify(book_inventory.search(keyword))
